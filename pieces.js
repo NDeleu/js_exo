@@ -1,27 +1,97 @@
-/* Mise en relation ac le json */
+/* Mise en relation ac le json par le DOM */
 const reponse = await fetch("pieces-autos.json");
 const pieces = await reponse.json();
 
-/* création des éléments dans le html en relation avec les éléments du json */
-const article = pieces[0];
-const imageElement = document.createElement("img");
-imageElement.src = article.image;
-const nomElement = document.createElement("h2");
-nomElement.innerText = article.nom;
-const prixElement = document.createElement("p");
-/* Par exemple, ` l’addition est de ${2 +3} euros` affichera : 
-“l’addition est de 5 euros”.
-ici : prixElement.innerText = "Prix: " + article.prix + " €"; */
-prixElement.innerText = `Prix: ${article.prix} € (${article.prix < 35 ? "€" : "€€€"})`;
-const categorieElement = document.createElement("p");
-/* L’opérateur nullish (??) est très récent en JavaScript. 
-Avant, nous utilisions l’opérateur “ou logique” || */
-categorieElement.innerText = article.categorie ?? "(aucune catégorie)";
+// On va rattacher chaque éléments de pieces-auto.json a index.html
+for (let i = 0; i < pieces.length; i++)
+{
+    // Récupération de l'élément du DOM qui accueillera les fiches
+    const sectionFiches = document.querySelector(".fiches");
 
-/* mise en relation des balises html et de nos éléments créés ci dessus
-par le biais d'une relation parent enfant */
-const sectionFiches = document.querySelector(".fiches");
-sectionFiches.appendChild(imageElement);
-sectionFiches.appendChild(nomElement);
-sectionFiches.appendChild(prixElement);
-sectionFiches.appendChild(categorieElement);
+    // Création d’une balise dédiée à une pièce automobile
+    const pieceElement = document.createElement("article");
+
+    // On crée l’élément img.
+    const imageElement = document.createElement("img");
+
+    /* On accède à l’indice i de la liste pieces pour configurer 
+    la source de l’image. */
+    imageElement.src = pieces[i].image;
+
+    // Idem pour le nom, le prix et la catégorie...
+    const nomElement = document.createElement("h2");
+    nomElement.innerText = pieces[i].nom
+
+    const prixElement = document.createElement("p");
+    /* Par exemple, ` l’addition est de ${2 +3} euros` affichera : 
+    “l’addition est de 5 euros”.
+    ici : prixElement.innerText = "Prix: " + article.prix + " €"; */
+    prixElement.innerText = `Prix: ${pieces[i].prix} € (${pieces[i].prix < 35 ? "€" : "€€€"})`;
+
+    const categorieElement = document.createElement("p");
+    /* L’opérateur nullish (??) est très récent en JavaScript. 
+    Avant, nous utilisions l’opérateur “ou logique” || */
+    categorieElement.innerText = pieces[i].categorie ?? "(aucune catégorie)";
+
+    const descriptionElement = document.createElement("p");
+    descriptionElement.innerText = pieces[i].description ?? "Pas de description pour le moment.";
+
+    const stockElement = document.createElement("p");
+    stockElement.innerText = pieces[i].disponibilite ? "En stock" : "Rupture de stock";
+
+    // On rattache la balise article à la section Fiches
+    sectionFiches.appendChild(pieceElement);
+
+    // On rattache l’image à pieceElement (la balise article)
+    pieceElement.appendChild(imageElement);
+
+    // Idem pour le nom, le prix et la catégorie...
+
+    pieceElement.appendChild(nomElement);
+    pieceElement.appendChild(prixElement);
+    pieceElement.appendChild(categorieElement);
+    pieceElement.appendChild(descriptionElement);
+    pieceElement.appendChild(stockElement);
+
+}
+
+// bouton pour organiser par prix croissant les articles
+const boutonTrier = document.querySelector(".btn-trier");
+
+boutonTrier.addEventListener("click", function () {
+    const piecesOrdonnees = Array.from(pieces);
+    piecesOrdonnees.sort(function (a, b) {
+        return a.prix - b.prix;
+     });
+     console.log(piecesOrdonnees);
+ });
+
+// bouton pour filtrer les articles à ceux ayant un prix inférieur à 35
+// pas besoin de créer de copie de la liste avec Array ici, car filter le fait déjà auto
+const boutonFiltrer = document.querySelector(".btn-filtrer");
+
+boutonFiltrer.addEventListener("click", function() {
+    const piecesFiltrees = pieces.filter(function (piece) {
+        return piece.prix <= 35;
+    });
+    console.log(piecesFiltrees);
+});
+
+const boutonDecroissant = document.querySelector(".btn-decroissant");
+
+boutonDecroissant.addEventListener("click", function () {
+    const piecesOrdonnees = Array.from(pieces);
+    piecesOrdonnees.sort(function (a, b) {
+        return b.prix - a.prix;
+     });
+     console.log(piecesOrdonnees);
+});
+
+const boutonNoDescription = document.querySelector(".btn-nodesc");
+
+boutonNoDescription.addEventListener("click", function () {
+    const piecesFiltrees = pieces.filter(function (piece) {
+        return piece.description
+    });
+   console.log(piecesFiltrees)
+});

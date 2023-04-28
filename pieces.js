@@ -12,9 +12,11 @@ const prixElement = document.createElement("p");
 /* Par exemple, ` l’addition est de ${2 +3} euros` affichera : 
 “l’addition est de 5 euros”.
 ici : prixElement.innerText = "Prix: " + article.prix + " €"; */
-prixElement.innerText = `Prix: ${article.prix} €`;
+prixElement.innerText = `Prix: ${article.prix} € (${article.prix < 35 ? "€" : "€€€"})`;
 const categorieElement = document.createElement("p");
-categorieElement.innerText = article.categorie;
+/* L’opérateur nullish (??) est très récent en JavaScript. 
+Avant, nous utilisions l’opérateur “ou logique” || */
+categorieElement.innerText = article.categorie ?? "(aucune catégorie)";
 
 /* mise en relation des balises html et de nos éléments créés ci dessus
 par le biais d'une relation parent enfant */
